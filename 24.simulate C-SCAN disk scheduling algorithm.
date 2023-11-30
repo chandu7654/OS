@@ -1,0 +1,73 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+#define SIZE 8
+
+void cscan(int arr[], int head, int size);
+
+int main() {
+    int requests[SIZE] = {98, 183, 37, 122, 14, 124, 65, 67};
+    int head = 53;
+
+    cscan(requests, head, SIZE);
+
+    return 0;
+}
+
+void cscan(int arr[], int head, int size) {
+    int total_tracks = 200;
+    int movement = 0;
+    
+    printf("C-SCAN Disk Scheduling:\n");
+    printf("Initial Head Position: %d\n", head);
+    printf("Requests: ");
+
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+
+    printf("\nSequence of Movement: %d", head);
+
+    // Sort the requests in ascending order
+    for (int i = 0; i < size - 1; i++) {
+        for (int j = 0; j < size - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+
+    int start = 0;
+    // Find the position to start scanning
+    for (int i = 0; i < size; i++) {
+        if (arr[i] > head) {
+            start = i;
+            break;
+        }
+    }
+
+    // Scanning towards the right
+    for (int i = start; i < size; i++) {
+        printf(" -> %d", arr[i]);
+        movement += abs(arr[i] - head);
+        head = arr[i];
+    }
+
+    // Move to the beginning if there are tracks remaining
+    if (start > 0) {
+        printf(" -> %d", total_tracks - 1);
+        movement += total_tracks - 1 - head;
+        head = total_tracks - 1;
+    }
+
+    // Scanning towards the left
+    for (int i = 0; i < start; i++) {
+        printf(" -> %d", arr[i]);
+        movement += abs(arr[i] - head);
+        head = arr[i];
+    }
+
+    printf("\nTotal Head Movement: %d\n", movement);
+}
